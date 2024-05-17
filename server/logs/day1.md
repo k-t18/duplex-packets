@@ -63,3 +63,24 @@ In config.json file make below changes.
     "port": 3308       <------------- IMPORTANT
   },
 ```
+
+### Learned how to check whether authentication with DB has done or not.
+
+```mysql
+const { Sequelize } = require("sequelize");
+ const sequelize = new Sequelize("db_test", "root", "lostinloops", {
+   host: "localhost",
+   dialect: "mysql",
+   port: 3308,
+ });
+
+app.get("/db-health", async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.status(200).send("Database connection established successfully.");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Failed to connect to the database.");
+  }
+});
+```
