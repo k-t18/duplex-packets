@@ -64,7 +64,7 @@ In config.json file make below changes.
   },
 ```
 
-### Learned how to check whether authentication with DB has done or not.
+## Learned how to check whether authentication with DB has done or not.
 
 ```mysql
 const { Sequelize } = require("sequelize");
