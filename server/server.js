@@ -1,12 +1,16 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 require("dotenv").config();
 
 const db = require("./models");
+const authRoutes = require("./routes/auth");
 
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+app.use("/auth", authRoutes);
 
 db.sequelize.sync().then(() => {
   app.listen(5000, () => {
