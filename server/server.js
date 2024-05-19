@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 require("dotenv").config();
-
+const { Server } = require("socket.io");
 const db = require("./models");
 const authRoutes = require("./routes/auth");
 
