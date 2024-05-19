@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { Users } = require("../models");
+const checkUserSession = require("../utils/checkUserSession");
 
 function generateRandomString(length) {
   const charset =
@@ -47,6 +48,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("cookie", req.cookies);
     const userData = await Users.findOne({ where: { email } });
     if (!userData) {
       return res
@@ -58,10 +60,14 @@ router.post("/login", async (req, res) => {
       return res.status(401).send({ message: "Incorrect Password" });
     }
     res.cookie("sid", generateRandomString(64), {
-      maxAge: 900000,
+      maxAge: 60000,
       httpOnly: true,
     });
-    res.cookie("user", { email: userData.email, userName: userData.firstName });
+    res.cookie(
+      "user",
+      { email: userData.email, userName: userData.firstName },
+      { maxAge: 60000, httpOnly: true }
+    );
     return res.status(200).send({ message: "Logged In" });
   } catch (error) {
     console.log("err", error);
@@ -71,8 +77,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/get-cookie", (req, res) => {
-  res.send(req.cookies);
+router.get("/get-cookie", checkUserSession, (req, res) => {
+  res.send("cookiee");
 });
 
 module.exports = router;
