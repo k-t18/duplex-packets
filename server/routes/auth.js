@@ -47,6 +47,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("conn", req.socket);
     const { email, password } = req.body;
     console.log("cookie", req.cookies);
     const userData = await Users.findOne({ where: { email } });
@@ -59,6 +60,7 @@ router.post("/login", async (req, res) => {
     if (!matchPassword) {
       return res.status(401).send({ message: "Incorrect Password" });
     }
+
     res.cookie("sid", generateRandomString(64), {
       maxAge: 60000,
       httpOnly: true,

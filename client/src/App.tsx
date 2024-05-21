@@ -15,6 +15,9 @@ function App() {
     socketIo.on("message-check", (data: any) => {
       console.log(data);
     });
+    socketIo.on("logout", () => {
+      alert("You have been logged out");
+    });
   }, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

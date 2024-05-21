@@ -24,16 +24,18 @@ app.use(express.json());
 app.use(cookieParser());
 const db = require("./models");
 const authRoutes = require("./routes/auth");
+const atomsRoutes = require("./routes/atoms");
 
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
 app.use("/auth", authRoutes);
+app.use("/atoms", atomsRoutes);
 
 io.on("connection", (socket) => {
   console.log("websocket connected", socket.handshake.headers);
-  socket.emit("message-check", socket.handshake.headers);
+  socket.emit("message-check", "hi");
 });
 
 db.sequelize.sync().then(() => {
