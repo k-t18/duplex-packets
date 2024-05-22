@@ -67,7 +67,11 @@ router.post("/login", async (req, res) => {
     });
     res.cookie(
       "user",
-      { email: userData.email, userName: userData.firstName },
+      {
+        email: userData.email,
+        userName: userData.firstName,
+        role: userData.role,
+      },
       { maxAge: 60000, httpOnly: true }
     );
     return res.status(200).send({ message: "Logged In" });

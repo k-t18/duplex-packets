@@ -1,6 +1,5 @@
 const isAdminUser = (req, res, next) => {
-  if (req.cookies.sid) {
-    console.log(req.cookies);
+  if (req.cookies.sid && req.cookies.user.role === "Admin") {
     next();
   } else {
     res

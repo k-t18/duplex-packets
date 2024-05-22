@@ -6,12 +6,17 @@ const isAdminUser = require("../utils/isAdminUser");
 
 router.post("/new", isAdminUser, async (req, res) => {
   const { atomicNumber, atomicMass, symbol, name } = req.body;
-  const createAtom = await Atoms.create({
-    atomicNumber,
-    atomicMass,
-    symbol,
-    name,
-  });
+  if ((atomicNumber, atomicMass, symbol, name)) {
+    const createAtom = await Atoms.create({
+      atomicNumber,
+      atomicMass,
+      symbol,
+      name,
+    });
+  } else {
+    res.status(400).send({ message: "Please provide all the details" });
+  }
+
   res.status(200).send({ message: "Atom created successfully" });
 });
 
