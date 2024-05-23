@@ -5,19 +5,19 @@ const checkUserSession = require("../utils/checkUserSession");
 const isAdminUser = require("../utils/isAdminUser");
 
 router.post("/new", isAdminUser, async (req, res) => {
+  console.log(req.body);
   const { atomicNumber, atomicMass, symbol, name } = req.body;
-  if ((atomicNumber, atomicMass, symbol, name)) {
+  if (atomicNumber && atomicMass && symbol && name) {
     const createAtom = await Atoms.create({
       atomicNumber,
       atomicMass,
       symbol,
       name,
     });
+    res.status(200).send({ message: "Atom created successfully" });
   } else {
     res.status(400).send({ message: "Please provide all the details" });
   }
-
-  res.status(200).send({ message: "Atom created successfully" });
 });
 
 router.get("/", checkUserSession, async (req, res) => {
