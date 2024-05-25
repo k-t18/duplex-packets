@@ -30,11 +30,7 @@ function App() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await axios
-      .post(
-        "http://localhost:5000/auth/login",
-        { email, password },
-        { withCredentials: true }
-      )
+      .post("http://localhost:5000/auth/login", { email, password }, { withCredentials: true })
       .then((res) => {
         console.log(res);
       })
@@ -45,12 +41,9 @@ function App() {
   };
   const checkCookie = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/auth/get-cookie",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get("http://localhost:5000/auth/get-cookie", {
+        withCredentials: true,
+      });
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -62,20 +55,10 @@ function App() {
       <h1>Login Form</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={handleEmailChange}
-        />
+        <input type="email" id="email" value={email} onChange={handleEmailChange} />
         <br />
         <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={handlePasswordChange}
-        />
+        <input type="password" id="password" value={password} onChange={handlePasswordChange} />
         <br />
         <button type="submit">Login</button>
       </form>

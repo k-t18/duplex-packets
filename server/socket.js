@@ -13,9 +13,7 @@ const initializeSocket = (httpServer) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("websocket connected");
-    console.log("io-emit", io.emit);
-    socket.emit("message-check", "hi");
+    socket.emit("connection", "You are connected to the socket");
   });
 };
 
