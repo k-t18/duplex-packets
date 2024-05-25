@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 import "./App.css";
+import Login from "./pages/Login.tsx";
 
 function App() {
   const SOCKET_SERVER_URL = "ws://localhost:5000";
@@ -51,18 +52,7 @@ function App() {
   };
   return (
     <div className="App">
-      React + MySQL + Websockets App
-      <h1>Login Form</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={handleEmailChange} />
-        <br />
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="password" value={password} onChange={handlePasswordChange} />
-        <br />
-        <button type="submit">Login</button>
-      </form>
-      <button onClick={checkCookie}>check get cookie</button>
+      <Login />
     </div>
   );
 }
