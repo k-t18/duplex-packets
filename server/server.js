@@ -6,14 +6,16 @@ const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    allowedHeaders: ["my-custom-header"],
-    credentials: true,
-  },
-  cookie: true,
-});
+const { initializeSocket } = require("./socket");
+initializeSocket(httpServer);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "*",
+//     allowedHeaders: ["my-custom-header"],
+//     credentials: true,
+//   },
+//   cookie: true,
+// });
 
 const corsOptions = {
   credentials: true,
@@ -25,6 +27,7 @@ app.use(cookieParser());
 const db = require("./models");
 const authRoutes = require("./routes/auth");
 const atomsRoutes = require("./routes/atoms");
+const { Atoms } = require("./models");
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -33,10 +36,11 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/atoms", atomsRoutes);
 
-io.on("connection", (socket) => {
-  console.log("websocket connected", socket.handshake.headers);
-  socket.emit("message-check", "hi");
-});
+// io.on("connection", (socket) => {
+//   console.log("websocket connected", socket.handshake.headers);
+//   console.log("io", io);
+// });
+// module.exports = io;
 
 db.sequelize.sync().then(() => {
   httpServer.listen(5000, () => {

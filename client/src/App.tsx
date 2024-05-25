@@ -12,11 +12,8 @@ function App() {
       console.log(socketIo.id);
     });
 
-    socketIo.on("message-check", (data: any) => {
-      console.log(data);
-    });
-    socketIo.on("logout", () => {
-      alert("You have been logged out");
+    socketIo.on("get-atoms-list", (data: any) => {
+      console.log("update-atoms-list", data);
     });
   }, []);
   const [email, setEmail] = useState("");
