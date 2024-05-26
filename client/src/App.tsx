@@ -19,40 +19,27 @@ function App() {
       console.log("update-atoms-list", data);
     });
   }, []);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Prepare the data to send
+      const url = "http://localhost:5000/auth/logout";
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const body = JSON.stringify({}); // Include any data you need to send
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+      // Create a Blob with the data
+      const blob = new Blob([body], { type: "application/json" });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await axios
-      .post("http://localhost:5000/auth/login", { email, password }, { withCredentials: true })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // Perform login logic here using email and password
-  };
-  const checkCookie = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/auth/get-cookie", {
-        withCredentials: true,
-      });
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      // Use sendBeacon to send the data
+      navigator.sendBeacon(url, blob);
+    };
+    // Add the event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
+    // Cleanup the event listener on component unmount
+  }, []);
   const router = createBrowserRouter([
     {
       path: "/login",

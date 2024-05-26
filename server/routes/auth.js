@@ -60,9 +60,9 @@ router.post("/login", async (req, res) => {
     if (!matchPassword) {
       return res.status(401).send({ message: "Incorrect Password" });
     }
-
+    await Users.update({ isActive: true }, { where: { email } });
     res.cookie("sid", generateRandomString(64), {
-      maxAge: 60000,
+      maxAge: 900000,
       httpOnly: true,
     });
     res.cookie(
@@ -72,7 +72,7 @@ router.post("/login", async (req, res) => {
         userName: userData.firstName,
         role: userData.role,
       },
-      { maxAge: 60000, httpOnly: true }
+      { maxAge: 900000, httpOnly: true }
     );
     return res.status(200).send({ message: "Logged In" });
   } catch (error) {
@@ -83,6 +83,30 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  console.log("logout", req.cookies);
+  if (req.cookies.sid && req.cookies.user) {
+    const { user } = req.cookies;
+    const findUser = Users.findOne({
+      where: { email: user.email },
+    });
+    if (findUser) {
+      Users.update({ isActive: false }, { where: { email: user.email } });
+    }
+  }
+  res.clearCookie("sid");
+  res.clearCookie("user");
+  return res.status(200).send({ message: "Logged Out" });
+});
+router.delete("/delete-all-users", async (req, res) => {
+  try {
+    await Users.destroy({ where: {} });
+    res.status(200).json({ message: "All records deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 router.get("/get-cookie", checkUserSession, (req, res) => {
   res.send("cookiee");
 });
