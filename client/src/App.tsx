@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import axios from "axios";
+import { createBrowserRouter, Router, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login.tsx";
+import ErrorPage from "./pages/ErrorPage.tsx";
 
 function App() {
   const SOCKET_SERVER_URL = "ws://localhost:5000";
@@ -50,8 +52,21 @@ function App() {
       console.log(error);
     }
   };
+
+  const router = createBrowserRouter([
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/",
+      element: <div>root</div>,
+      children: [{ index: true, element: <div>index</div> }],
+    },
+  ]);
   return (
     <div className="App">
+      <RouterProvider router={router} />
       <Login />
     </div>
   );
