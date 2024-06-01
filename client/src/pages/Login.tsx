@@ -1,54 +1,64 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import axios from "axios";
 
+type FormInputs = {
+  email: string;
+  password: string;
+};
+
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInputs>();
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await axios
-      .post("http://localhost:5000/auth/login", { email, password }, { withCredentials: true })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      const response = await axios.post("http://localhost:5000/auth/login", {
+        ...data,
       });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
-        <div className="mb-4">
-          <label htmlFor="username" className="block mb-1 text-gray-700">
-            Email
-          </label>
-          <InputText id="username" className="w-full p-2 border border-gray-300 rounded" value={email} onChange={handleEmailChange} />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block mb-1 text-gray-700">
-            Password
-          </label>
-          <InputText
-            id="password"
-            className="w-full p-2 border border-gray-300 rounded"
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <Button className="w-full p-2 bg-blue-500 text-white rounded" label="Login" onClick={handleSubmit} />
+      <div className="bg-white w-96 h-auto p-8 rounded shadow-md">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h2 className="text-2xl font-bold mb-4">Login</h2>
+          <div className="mb-4">
+            <label htmlFor="username" className="block mb-1 text-gray-700">
+              Email
+            </label>
+            <InputText
+              type="text"
+              id="email"
+              className="p-inputtext-lg w-full p-2 border border-gray-300 rounded"
+              {...register("email", { required: true })}
+              autoComplete="off"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block mb-1 text-gray-700">
+              Password
+            </label>
+            <InputText
+              type="password"
+              className="w-full p-2 border border-gray-300 rounded"
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 8, message: "Minimum length should be 8 characters" },
+              })}
+            />
+            {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+          </div>
+          <Button className="w-full p-2 bg-blue-500 text-white rounded" label="Login" type="submit" />
+        </form>
       </div>
     </div>
   );

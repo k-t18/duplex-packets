@@ -4,6 +4,9 @@ import "./index.css";
 import App from "./App.tsx";
 import reportWebVitals from "./reportWebVitals";
 import { PrimeReactProvider } from "primereact/api";
+// import "primereact/resources/themes/saga-blue/theme.css"; // Theme
+// import "primereact/resources/primereact.min.css"; // Core CSS
+// import "primeicons/primeicons.css";
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
