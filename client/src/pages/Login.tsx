@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import axios from "axios";
+import useLogout from "../hooks/useLogout.ts";
 
 type FormInputs = {
   email: string;
@@ -10,22 +12,37 @@ type FormInputs = {
 };
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const { handleBeforeUnload } = useLogout();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setFocus,
   } = useForm<FormInputs>();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
         ...data,
       });
-      console.log(response);
+      if (response.status === 200) {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("role", response.data.role);
+        if (response.data.role === "Admin") {
+          navigate("/admin");
+        } else {
+          navigate("/user");
+        }
+      }
     } catch (error) {
-      console.error(error);
+      alert(error.response.data.message);
     }
   };
+  useEffect(() => {
+    setFocus("email");
+  }, []);
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white w-96 h-auto p-8 rounded shadow-md">
@@ -60,6 +77,7 @@ const Login: React.FC = () => {
           <Button className="w-full p-2 bg-blue-500 text-white rounded" label="Login" type="submit" />
         </form>
       </div>
+      <button onClick={handleBeforeUnload}>Logout</button>
     </div>
   );
 };

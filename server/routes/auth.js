@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { Users } = require("../models");
+const { getIo } = require("../socket");
 const checkUserSession = require("../utils/checkUserSession");
 
 function generateRandomString(length) {
@@ -74,7 +75,13 @@ router.post("/login", async (req, res) => {
       },
       { maxAge: 900000, httpOnly: true }
     );
-    return res.status(200).send({ message: "Logged In" });
+    const ioFunc = getIo();
+    const activeUsers = await Users.findAll({
+      where: { isActive: true },
+      attributes: ["id", "firstName", "email", "role"],
+    });
+    ioFunc.emit("get-active-users", activeUsers);
+    return res.status(200).send({ message: "Logged In", role: userData.role });
   } catch (error) {
     console.log("err", error);
     res.status(500).json({
@@ -83,7 +90,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", (req, res) => {
+router.post("/logout", async (req, res) => {
   console.log("logout", req.cookies);
   if (req.cookies.sid && req.cookies.user) {
     const { user } = req.cookies;
@@ -94,6 +101,13 @@ router.post("/logout", (req, res) => {
       Users.update({ isActive: false }, { where: { email: user.email } });
     }
   }
+
+  const ioFunc = getIo();
+  const activeUsers = await Users.findAll({
+    where: { isActive: true },
+    attributes: ["id", "firstName", "email", "role"],
+  });
+  ioFunc.emit("get-active-users", activeUsers);
   res.clearCookie("sid");
   res.clearCookie("user");
   return res.status(200).send({ message: "Logged Out" });

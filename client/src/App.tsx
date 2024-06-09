@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 import { createBrowserRouter, Router, RouterProvider } from "react-router-dom";
-import "./App.css";
 import Login from "./pages/Login.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
+import ProtectedRoute from "./routes/ProtectedRoute.tsx";
+import "./App.css";
+import useLogout from "./hooks/useLogout.ts";
+import Admin from "./pages/Admin.tsx";
 
 function App() {
   const SOCKET_SERVER_URL = "ws://localhost:5000";
+  const { handleBeforeUnload } = useLogout();
 
   useEffect(() => {
     const socketIo = io(SOCKET_SERVER_URL);
@@ -18,32 +22,29 @@ function App() {
     socketIo.on("get-atoms-list", (data: any) => {
       console.log("update-atoms-list", data);
     });
+
+    // socketIo.on("get-active-users", (data: any) => {
+    //   console.log("update-users-list", data);
+    // });
   }, []);
 
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      // Prepare the data to send
-      const url = "http://localhost:5000/auth/logout";
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const body = JSON.stringify({}); // Include any data you need to send
-
-      // Create a Blob with the data
-      const blob = new Blob([body], { type: "application/json" });
-
-      // Use sendBeacon to send the data
-      navigator.sendBeacon(url, blob);
-    };
-    // Add the event listener
     window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Cleanup the event listener on component unmount
   }, []);
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <h3>Home</h3>,
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: "admin",
+          element: <Admin />,
+        },
+        {
+          path: "user",
+          element: <h3>User infomatics</h3>,
+        },
+      ],
     },
     {
       path: "/login",
