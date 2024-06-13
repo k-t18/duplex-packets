@@ -23,9 +23,9 @@ function App() {
       console.log("update-atoms-list", data);
     });
 
-    // socketIo.on("get-active-users", (data: any) => {
-    //   console.log("update-users-list", data);
-    // });
+    socketIo.on("get-active-users", (data: any) => {
+      console.log("update-users-list", data);
+    });
   }, []);
 
   useEffect(() => {
