@@ -24,12 +24,17 @@ const Login: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-        ...data,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/auth/login`,
+        {
+          ...data,
+        },
+        { withCredentials: true }
+      );
       if (response.status === 200) {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("role", response.data.role);
+        // navigate("/");
         if (response.data.role === "Admin") {
           navigate("/admin");
         } else {

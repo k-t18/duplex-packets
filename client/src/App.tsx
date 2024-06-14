@@ -29,7 +29,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    // window.addEventListener("beforeunload", handleBeforeUnload);
   }, []);
   const router = createBrowserRouter([
     {
